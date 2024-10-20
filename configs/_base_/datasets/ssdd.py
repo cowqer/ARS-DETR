@@ -1,6 +1,6 @@
 # dataset settings
 dataset_type = 'SARDataset'
-data_root = '../datasets/ssdd/'
+data_root = '/data/seekyou/SSDD/yolo_style/'
 img_norm_cfg = dict(
     mean=[21.55, 21.55, 21.55], std=[24.42, 24.42, 24.42], to_rgb=True)
 train_pipeline = [
@@ -37,11 +37,11 @@ data = dict(
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
-        ann_file=data_root + 'test/inshore/labelTxt/',
-        img_prefix=data_root + 'test/inshore/images/',
+        ann_file=data_root + 'test/labelTxt/',
+        img_prefix=data_root + 'test/images/',
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
-        ann_file=data_root + 'test/offshore/labelTxt/',
-        img_prefix=data_root + 'test/offshore/images/',
+        ann_file=data_root + 'test/labelTxt/',
+        img_prefix=data_root + 'test/images/',
         pipeline=test_pipeline))

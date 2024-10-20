@@ -24,7 +24,7 @@ class RotatedDETR(RotatedSingleStageDetector):
                  pretrained=None,
                  init_cfg=None):
         super(RotatedDETR, self).__init__(backbone, None, bbox_head, train_cfg,
-                                   test_cfg, pretrained, init_cfg)
+                                   test_cfg, pretrained, init_cfg)#调用父RotatedDETR构造函数
 
     # over-write `forward_dummy` because:
     # the forward of bbox_head requires img_metas
@@ -32,7 +32,7 @@ class RotatedDETR(RotatedSingleStageDetector):
         """Convert detection results to a list of numpy arrays.
 
         Args:
-            bboxes (torch.Tensor | np.ndarray): shape (n, 5)
+            bboxes (torch.Tensor | np.ndarray): shape (n, 5) 形状(n, 5)表明每个边界框有 5 个值： (x_center, y_center, width, height, angle) 。
             labels (torch.Tensor | np.ndarray): shape (n, )
             num_classes (int): class number, including background class
 
@@ -82,15 +82,19 @@ class RotatedDETR(RotatedSingleStageDetector):
             tuple[Tensor, Tensor]: dets of shape [N, num_det, 5]
                 and class labels of shape [N, num_det].
         """
-        x = self.extract_feat(img)
+        x = self.extract_feat(img) #使用模型的主干从输入图像中提取特征，输出x包含 ( bbox_head ) 将用于边界框头进行预测的中间特征。
         # forward of this head requires img_metas
-        outs = self.bbox_head.forward_onnx(x, img_metas)
+        outs = self.bbox_head.forward_onnx(x, img_metas) # 边界框头 ( bbox_head ) 需要提取的特征 ( x ) 和图像元数据 ( img_metas ) 
+                                                        #进行前向传播。此步骤在处理特定于 ONNX 的修改时执行对象检测的前向传递。
         # get shape as tensor
         img_shape = torch._shape_as_tensor(img)[2:]
-        img_metas[0]['img_shape_for_onnx'] = img_shape
-
+        img_metas[0]['img_shape_for_onnx'] = img_shape #  将输入图像的形状检索为张量
+        #
         det_bboxes, det_labels = self.bbox_head.onnx_export(*outs, img_metas)
-
+        """
+        最终的检测边界框和类标签由bbox_head以与 ONNX 兼容的格式生成。
+        方法bbox_head.onnx_export负责确保 ONNX 导出的预测结构正确，处理特定于 ONNX 的任何必要调整。
+        """
         return det_bboxes, det_labels
 
     def forward_train(self,

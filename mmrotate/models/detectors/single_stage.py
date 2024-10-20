@@ -36,7 +36,7 @@ class RotatedSingleStageDetector(RotatedBaseDetector):
         self.train_cfg = train_cfg
         self.test_cfg = test_cfg
 
-    def extract_feat(self, img):
+    def extract_feat(self, img):#backbone+neck的特征提取
         """Directly extract features from the backbone+neck."""
         x = self.backbone(img)
         if self.with_neck:

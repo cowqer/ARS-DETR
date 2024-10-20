@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-
+batch_size = 4
 angle_version = 'le90'
 _base_ = [
-    '../_base_/datasets/dotav1.py', '../_base_/schedules/schedule_1x.py',
+    '../_base_/datasets/ssdd.py', '../_base_/schedules/schedule_1x.py',
     '../_base_/default_runtime.py'
 ]
 model = dict(
@@ -28,7 +28,7 @@ model = dict(
     bbox_head=dict(
         type='ARSDeformableDETRHead',
         num_query=300,
-        num_classes=15,
+        num_classes=1,
         in_channels=2048,
         sync_cls_avg_factor=True,
         with_box_refine=True,
@@ -126,8 +126,8 @@ train_pipeline = [
 ]
 
 data = dict(
-    samples_per_gpu=2,
-    workers_per_gpu=2,
+    samples_per_gpu=batch_size,
+    workers_per_gpu=batch_size,
     train=dict(pipeline=train_pipeline, version=angle_version),
     val=dict(version=angle_version),
     test=dict(version=angle_version))
@@ -153,5 +153,4 @@ evaluation = dict(interval=1,
                   save_best='auto',
                   metric='mAP')
 find_unused_parameters = True
-
-work_dir = 'work_dirs/csl_detr_r50_dota/'
+work_dir = 'work_dirs/csl_detr_r50_ssdd/'
